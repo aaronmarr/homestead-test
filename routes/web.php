@@ -21,6 +21,12 @@ Route::get('/welcome', function () {
     return view('welcome');
 });
 
+Route::get('/about', function () {
+    return view('about', [
+        'articles' => App\Article::take(3)->latest('updated_at')->get()
+    ]);
+});
+
 Route::get('/contact', function () {
     return view('contact');
 });
@@ -28,6 +34,8 @@ Route::get('/contact', function () {
 Route::get('/test', function () {
     return view('test');
 });
+
+Route::get('articles/{article}', 'ArticlesController@show');
 
 // Route::get('/posts/{post}', function ($post) {
 //     $posts = [
