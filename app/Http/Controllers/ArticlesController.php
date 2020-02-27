@@ -14,10 +14,8 @@ class ArticlesController extends Controller
         return view('articles.index', ['articles' => $articles]);
     }
 
-    public function show($id)
+    public function show(Article $article)
     {
-        $article = Article::find($id);
-
         return view('articles.show', ['article' => $article]);
     }
 
@@ -28,35 +26,29 @@ class ArticlesController extends Controller
 
     public function store()
     {
-        $article = new Article();
+        Article::create($this->validateArticle());
 
-        // dd(request('title'));
-
-        $article->title = request('title');
-        $article->body = request('body');
-        $article->excerpt = request('excerpt');
-
-        $article->save();
-
-        return redirect('/articles');
+        return redirect(route('articles.index'));
     }
 
-    public function edit($id)
+    public function edit(Article $article)
     {
-        $article = Article::find($id);
-
         return view('articles.edit', ['article' => $article]);
     }
 
-    public function update($id)
+    public function update(Article $article)
     {
-        $article = Article::find($id);
+        $article->update($this->validateArticle());
 
-        $article->title = request('title');
-        $article->body = request('body');
-        $article->excerpt = request('excerpt');
-        $article->save();
-        
-        return redirect('/articles/' . $article->id);
+        return redirect($article->path());
+    }
+
+    protected function validateArticle()
+    {
+        return request()->validate([
+            'title' => 'required',
+            'excerpt' => 'required',
+            'body' => 'required',
+        ]);
     }
 }
